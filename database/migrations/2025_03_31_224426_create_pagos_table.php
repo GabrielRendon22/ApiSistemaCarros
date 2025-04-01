@@ -12,9 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pagos', function (Blueprint $table) {
-            $table->id_pago();
+            $table->bigIncrements('id_pago'); // Definición de clave primaria
             $table->timestamp('fecha_registro')->useCurrent();
-            $table->foreignId('id_suscripcion')->constrained('suscripciones');
+
+            // Definición de la clave foránea
+            $table->unsignedBigInteger('id_suscripcion');
+            $table->foreign('id_suscripcion')->references('id_suscripcion')->on('suscripciones')->onDelete('cascade'); // Referencia a id_suscripcion en suscripciones
+
             $table->timestamps();
         });
         

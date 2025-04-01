@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('categorias', function (Blueprint $table) {
-            $table->id_categoria();
+            $table->bigIncrements('id_categoria'); // Usando bigIncrements para definir una columna auto-incremental como clave primaria
             $table->string('nombre_categoria', 100)->unique();
             $table->text('descripcion')->nullable();
             $table->timestamps();

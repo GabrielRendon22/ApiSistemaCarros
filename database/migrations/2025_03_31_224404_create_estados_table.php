@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('estados', function (Blueprint $table) {
-            $table->id_estado();
+            $table->bigIncrements('id_estado'); // Usando bigIncrements para la clave primaria
             $table->string('descripcion', 100)->unique();
             $table->boolean('es_suscripcion')->default(false);
             $table->timestamps();

@@ -15,15 +15,15 @@ class UsuarioController extends Controller
     {
         $request->validate([
             'nombres' => 'required',
-            'email' => 'required|email|unique:Usuario',
-            'id_rol' => 'required|exists:Rol,rol_id'
+            'email' => 'required|email|unique:usuarios',
+            'id_rol' => 'required|exists:Rols,id'
         ]);
         return Usuario::create($request->all());
     }
 
     public function show($id)
     {
-        return Usuario::with('rol')->findOrFail($id);
+        return Usuario::with('rols')->findOrFail($id);
     }
 
     public function update(Request $request, $id)

@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('reservaciones', function (Blueprint $table) {
-            $table->id();
+            $table->id_reservacion();
             $table->date('fecha_desde');
             $table->date('fecha_hasta');
             $table->timestamp('fecha_registro')->useCurrent();

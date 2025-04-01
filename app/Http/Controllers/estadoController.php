@@ -14,7 +14,7 @@ class EstadoController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'descripcion' => 'required|unique:Estado',
+            'descripcion' => 'required|unique:estados',
             'es_suscripcion' => 'boolean'
         ]);
         return Estado::create($request->all());

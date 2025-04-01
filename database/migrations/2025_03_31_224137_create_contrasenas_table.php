@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('contrasenas', function (Blueprint $table) {
-            $table->id();
+            $table->id_contrasena();
             $table->string('contrasena', 255);
             $table->timestamp('fecha_registro')->useCurrent();
             $table->boolean('es_activa')->default(true);

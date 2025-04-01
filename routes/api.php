@@ -24,7 +24,7 @@ Route::get('/', function () {
 // Rutas para CategoriaController
 Route::get('categorias', [categoriaController::class, 'index']);
 Route::post('categorias', [categoriaController::class, 'store']);
-Route::get('categorias/{id}', [CategoriaController::class, 'show']);
+Route::get('categorias/{id}', [categoriaController::class, 'show']);
 Route::put('categorias/{id}', [CategoriaController::class, 'update']);
 Route::delete('categorias/{id}', [CategoriaController::class, 'destroy']);
 
@@ -49,11 +49,11 @@ Route::put('estados/{id}', [EstadoController::class, 'update']);
 Route::delete('estados/{id}', [EstadoController::class, 'destroy']);
 
 // Rutas para RolController
-Route::get('roles', [RolController::class, 'index']);
-Route::post('roles', [RolController::class, 'store']);
-Route::get('roles/{id}', [RolController::class, 'show']);
-Route::put('roles/{id}', [RolController::class, 'update']);
-Route::delete('roles/{id}', [RolController::class, 'destroy']);
+Route::get('rols', [RolController::class, 'index']);
+Route::post('rols', [RolController::class, 'store']);
+Route::get('rols/{id}', [RolController::class, 'show']);
+Route::put('rols/{id}', [RolController::class, 'update']);
+Route::delete('rols/{id}', [RolController::class, 'destroy']);
 
 // Rutas para PlanController
 Route::get('planes', [PlanController::class, 'index']);

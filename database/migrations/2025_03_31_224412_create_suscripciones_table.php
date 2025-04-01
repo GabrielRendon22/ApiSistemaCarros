@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('suscripciones', function (Blueprint $table) {
-            $table->id();
+            $table->id_suscripcion();
             $table->date('fecha_inicio');
             $table->date('fecha_fin')->nullable();
             $table->date('fecha_pago')->nullable();

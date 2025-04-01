@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pagos', function (Blueprint $table) {
-            $table->id();
+            $table->id_pago();
             $table->timestamp('fecha_registro')->useCurrent();
             $table->foreignId('id_suscripcion')->constrained('suscripciones');
             $table->timestamps();

@@ -13,7 +13,7 @@ class RolController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate(['nombre_rol' => 'required|unique:Rol']);
+        $request->validate(['nombre_rol' => 'required|unique:Rols']);
         return Rol::create($request->all());
     }
 

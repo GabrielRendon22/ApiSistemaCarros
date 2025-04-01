@@ -3,9 +3,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class categoria extends Model
+class Categoria extends Model
 {
-    protected $table = 'categorias';
+    protected $table = 'Categorias';
     protected $primaryKey = 'id_categoria';
     public $timestamps = false;
 

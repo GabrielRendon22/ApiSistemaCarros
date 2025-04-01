@@ -14,8 +14,11 @@ class PagoController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'id_suscripcion' => 'required|exists:Suscripcion,suscripcion_id'
+            'id_suscripcion' => 'required|integer|exists:suscripciones,id_suscripcion',
+            'fecha_registro' => 'nullable|date',
+            'monto' => 'required|numeric|min:0',
         ]);
+        
         return Pago::create($request->all());
     }
 

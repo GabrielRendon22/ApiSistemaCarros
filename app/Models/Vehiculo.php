@@ -5,23 +5,23 @@ use Illuminate\Database\Eloquent\Model;
 
 class Vehiculo extends Model
 {
-    protected $table = 'Vehiculo';
-    protected $primaryKey = 'vehiculo_id';
+    protected $table = 'vehiculos';
+    protected $primaryKey = 'id_vehiculo';
 
     protected $fillable = ['marca', 'modelo', 'anio', 'placa', 'id_estado', 'id_categoria'];
 
     public function estado()
     {
-        return $this->belongsTo(Estado::class, 'id_estado', 'estado_id');
+        return $this->belongsTo(Estado::class, 'id_estado', 'id_estado');
     }
 
     public function categoria()
     {
-        return $this->belongsTo(Categoria::class, 'id_categoria', 'categoria_id');
+        return $this->belongsTo(Categoria::class, 'id_categoria', 'id_categoria');
     }
 
     public function reservaciones()
     {
-        return $this->hasMany(Reservacion::class, 'id_vehiculo', 'vehiculo_id');
+        return $this->hasMany(Reservacion::class, 'id_vehiculo', 'id_vehiculo');
     }
 }

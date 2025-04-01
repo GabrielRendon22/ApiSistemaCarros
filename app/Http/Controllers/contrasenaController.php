@@ -16,7 +16,7 @@ class ContrasenaController extends Controller
     {
         $request->validate([
             'contrasena' => 'required|min:8',
-            'id_usuario' => 'required|exists:usuarios,id'
+            'id_usuario' => 'required|exists:usuarios,id_usuario',
         ]);
 
         $data = $request->all();

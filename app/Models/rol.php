@@ -5,14 +5,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Rol extends Model
 {
-    protected $table = 'Rols';
-    protected $primaryKey = 'rol_id';
+    protected $table = 'rols';
+    protected $primaryKey = 'id_rol';
     public $timestamps = false;
 
     protected $fillable = ['nombre_rol'];
 
     public function usuarios()
     {
-        return $this->hasMany(Usuario::class, 'id_rol', 'rol_id');
+        return $this->hasMany(Usuario::class, 'id_rol', 'id_rol');
     }
 }

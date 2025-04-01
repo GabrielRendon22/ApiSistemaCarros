@@ -12,6 +12,7 @@ use App\Http\Controllers\PagoController;
 use App\Http\Controllers\ReservacionController;
 use App\Http\Controllers\SuscripcionController;
 use App\Http\Controllers\VehiculoController;
+use App\Http\Controllers\AuthController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -40,7 +41,7 @@ Route::get('usuarios', [UsuarioController::class, 'index']);
 Route::post('usuarios', [UsuarioController::class, 'store']);
 Route::get('usuarios/{id}', [UsuarioController::class, 'show']);
 Route::put('usuarios/{id}', [UsuarioController::class, 'update']);
-
+Route::delete('usuarios/{id}', [UsuarioController::class, 'destroy']);
 // Rutas para EstadoController
 Route::get('estados', [EstadoController::class, 'index']);
 Route::post('estados', [EstadoController::class, 'store']);
@@ -89,3 +90,8 @@ Route::post('vehiculos', [VehiculoController::class, 'store']);
 Route::get('vehiculos/{id}', [VehiculoController::class, 'show']);
 Route::put('vehiculos/{id}', [VehiculoController::class, 'update']);
 Route::delete('vehiculos/{id}', [VehiculoController::class, 'destroy']);
+Route::get('vehiculos/sin-reserva', [VehiculoController::class, 'vehiculosSinReserva']);
+Route::get('vehiculos/con-reserva', [VehiculoController::class, 'vehiculosConReserva']);
+
+Route::post('register', [AuthController::class, 'register']);
+Route::post('login', [AuthController::class, 'login']);

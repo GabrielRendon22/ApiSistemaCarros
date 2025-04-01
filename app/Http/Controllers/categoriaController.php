@@ -1,14 +1,14 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Models\categoria;
+use App\Models\Categoria;
 use Illuminate\Http\Request;
 
-class categoriaController extends Controller
+class CategoriaController extends Controller
 {
     public function index()
     {
-        return categoria::all();
+        return Categoria::all();
     }
 
     public function store(Request $request)
@@ -17,24 +17,24 @@ class categoriaController extends Controller
             'nombre_categoria' => 'required|unique:categorias',
             'descripcion' => 'nullable'
         ]);
-        return categoria::create($request->all());
+        return Categoria::create($request->all());
     }
 
     public function show($id)
     {
-        return categoria::findOrFail($id);
+        return Categoria::findOrFail($id);
     }
 
     public function update(Request $request, $id)
     {
-        $categoria = categoria::findOrFail($id);
+        $categoria = Categoria::findOrFail($id);
         $categoria->update($request->all());
         return $categoria;
     }
 
     public function destroy($id)
     {
-        $categoria = categoria::findOrFail($id);
+        $categoria = Categoria::findOrFail($id);
         $categoria->delete();
         return response()->json(['message' => 'Categoría eliminada']);
     }

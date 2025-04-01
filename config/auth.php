@@ -14,7 +14,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => env('AUTH_GUARD', 'web'),
+        'guard' => env('AUTH_GUARD', 'api'),  // Cambié de 'web' a 'api' ya que usamos JWT en la API
         'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
     ],
 
@@ -23,15 +23,10 @@ return [
     | Authentication Guards
     |--------------------------------------------------------------------------
     |
-    | Next, you may define every authentication guard for your application.
-    | Of course, a great default configuration has been defined for you
-    | which utilizes session storage plus the Eloquent user provider.
+    | Here you may define every authentication guard for your application.
+    | The default guard uses session storage but we will use JWT for API authentication.
     |
-    | All authentication guards have a user provider, which defines how the
-    | users are actually retrieved out of your database or other storage
-    | system used by the application. Typically, Eloquent is utilized.
-    |
-    | Supported: "session"
+    | Supported: "session", "jwt"
     |
     */
 
@@ -39,6 +34,13 @@ return [
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
+        ],
+
+        // Aquí agregamos el guard para JWT, que usaremos para las API
+        'api' => [
+            'driver' => 'jwt',  // Establecemos que el driver de 'api' sea 'jwt'
+            'provider' => 'users',
+          
         ],
     ],
 
@@ -51,24 +53,15 @@ return [
     | users are actually retrieved out of your database or other storage
     | system used by the application. Typically, Eloquent is utilized.
     |
-    | If you have multiple user tables or models you may configure multiple
-    | providers to represent the model / table. These providers may then
-    | be assigned to any extra authentication guards you have defined.
-    |
     | Supported: "database", "eloquent"
     |
     */
 
     'providers' => [
         'users' => [
-            'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\User::class),
+            'driver' => 'eloquent',  // Usamos el modelo de Eloquent para los usuarios
+            'model' => env('AUTH_MODEL', App\Models\Usuario::class),  // Asegúrate de que apunte a tu modelo Usuario
         ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
     ],
 
     /*
@@ -111,5 +104,4 @@ return [
     */
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
-
 ];

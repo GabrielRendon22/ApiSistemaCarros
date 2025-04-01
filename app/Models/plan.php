@@ -9,7 +9,7 @@ class Plan extends Model
     protected $primaryKey = 'id';
     public $timestamps = false;
 
-    protected $fillable = ['nombre_plan', 'descripcion', 'precio_mensual', 'limite_km', 'id'];
+    protected $fillable = ['nombre_plan', 'descripcion', 'precio_mensual', 'limite_km', 'id_categoria'];
 
     public function categoria()
     {

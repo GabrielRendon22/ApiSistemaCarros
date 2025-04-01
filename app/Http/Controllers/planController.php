@@ -18,7 +18,7 @@ class PlanController extends Controller
             'descripcion' => 'nullable|string', // Agregado: Campo opcional de tipo texto
             'precio_mensual' => 'required|numeric|min:0',
             'limite_km' => 'nullable|numeric',
-            'id' => 'required|exists:categorias,categoria_id' // Corregido: Nombre de columna correcto
+            'id' => 'required|exists:categorias,id' // Corregido: Nombre de columna correcto
         ]);
         
         return Plan::create($request->all());
@@ -36,7 +36,7 @@ class PlanController extends Controller
             'descripcion' => 'nullable|string', // Agregado: Validación en update
             'precio_mensual' => 'sometimes|required|numeric|min:0',
             'limite_km' => 'nullable|numeric',
-            'id' => 'sometimes|required|exists:categorias,id' // Corregido
+            'id' => 'sometimes|required|exists:categorias,id_categoria' // Corregido
         ]);
 
         $plan = Plan::findOrFail($id);

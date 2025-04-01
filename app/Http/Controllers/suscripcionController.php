@@ -8,7 +8,7 @@ class SuscripcionController extends Controller
 {
     public function index()
     {
-        return Suscripcion::with(['cliente', 'plan', 'estado'])->get();
+        return Suscripcion::with(['usuarios', 'planes', 'estados'])->get();
     }
 
     public function store(Request $request)
@@ -17,9 +17,9 @@ class SuscripcionController extends Controller
             'fecha_inicio' => 'required|date',
             'fecha_fin' => 'nullable|date|after:fecha_inicio',
             'fecha_pago' => 'nullable|date',
-            'id_cliente' => 'required|exists:Usuario,usuario_id',
-            'id_plan' => 'required|exists:Plan,id_plan',
-            'id_estado' => 'required|exists:Estado,estado_id'
+            'id' => 'required|exists:usuarios,id',
+            'id' => 'required|exists:planes,id',
+            'id' => 'required|exists:estados,id'
         ]);
         return Suscripcion::create($request->all());
     }

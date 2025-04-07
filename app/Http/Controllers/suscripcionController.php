@@ -3,103 +3,98 @@ namespace App\Http\Controllers;
 
 use App\Models\Suscripcion;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class SuscripcionController extends Controller
 {
     public function index()
     {
+        Log::info('Accediendo al listado de suscripciones');
         return Suscripcion::all();
     }
 
     public function store(Request $request)
 {
-    $request->validate([
-        'fecha_inicio' => [
-            'required',
-            'date',
-            'after_or_equal:today' // Asegura que la fecha de inicio no sea en el pasado
-        ],
-        'fecha_fin' => [
-            'nullable',
-            'date',
-            'after:fecha_inicio' // La fecha de fin debe ser posterior a la de inicio
-        ],
-        'fecha_pago' => [
-            'nullable',
-            'date',
-            'after_or_equal:fecha_inicio' // La fecha de pago no debe ser antes de la fecha de inicio
-        ],
-        'id_cliente' => [
-            'required',
-            'integer',
-            'exists:usuarios,id_usuario' // Verifica que el cliente exista en la tabla usuarios
-        ],
-        'id_plan' => [
-            'required',
-            'integer',
-            'exists:planes,id_plan' // Verifica que el plan exista en la tabla planes
-        ],
-        'id_estado' => [
-            'required',
-            'integer',
-            'exists:estados,id_estado' // Verifica que el estado exista en la tabla estados
-        ],
-    ], [
-        // Mensajes personalizados de error
-        'fecha_inicio.required' => 'La fecha de inicio es obligatoria.',
-        'fecha_inicio.date' => 'La fecha de inicio debe ser una fecha válida.',
-        'fecha_inicio.after_or_equal' => 'La fecha de inicio no puede estar en el pasado.',
-
-        'fecha_fin.date' => 'La fecha de fin debe ser una fecha válida.',
-        'fecha_fin.after' => 'La fecha de fin debe ser posterior a la fecha de inicio.',
-
-        'fecha_pago.date' => 'La fecha de pago debe ser una fecha válida.',
-        'fecha_pago.after_or_equal' => 'La fecha de pago no puede ser antes de la fecha de inicio.',
-
-        'id_cliente.required' => 'El ID del cliente es obligatorio.',
-        'id_cliente.integer' => 'El ID del cliente debe ser un número entero.',
-        'id_cliente.exists' => 'El cliente seleccionado no existe.',
-
-        'id_plan.required' => 'El ID del plan es obligatorio.',
-        'id_plan.integer' => 'El ID del plan debe ser un número entero.',
-        'id_plan.exists' => 'El plan seleccionado no existe.',
-
-        'id_estado.required' => 'El ID del estado es obligatorio.',
-        'id_estado.integer' => 'El ID del estado debe ser un número entero.',
-        'id_estado.exists' => 'El estado seleccionado no existe.',
+    Log::info('Solicitud de creación recibida', [
+        'ip' => $request->ip(),
+        'datos' => $request->all(),
+        'fecha_actual' => now()->toDateString()
     ]);
 
+    $validatedData = $request->validate([
+        'fecha_inicio' => 'required|date|after_or_equal:today',
+        'fecha_fin' => 'nullable|date|after:fecha_inicio',
+        'fecha_pago' => 'nullable|date|after_or_equal:fecha_inicio',
+        'id_usuario' => 'required|integer|exists:usuarios,id_usuario',
+        'id_plan' => 'required|integer|exists:planes,id_plan',
+        'id_estado' => 'required|integer|exists:estados,id_estado',
+    ]);
+
+    Log::debug('Datos después de validación', $validatedData);
+
     try {
-        $suscripcion = Suscripcion::create($request->all());
+        DB::beginTransaction();
+        
+        Log::info('Intentando crear registro en BD');
+        $suscripcion = Suscripcion::create($validatedData);
+        
+        Log::info('Registro creado en BD', ['id' => $suscripcion->id_suscripcion]);
+        DB::commit();
+        
         return response()->json([
-            'message' => 'Suscripción creada exitosamente.',
-            'suscripcion' => $suscripcion
-        ], 201); // Código 201 (Created)
+            'success' => true,
+            'data' => $suscripcion
+        ], 201);
+        
     } catch (\Exception $e) {
+        DB::rollBack();
+        Log::error('Fallo al crear suscripción', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+        
         return response()->json([
-            'error' => 'No se pudo crear la suscripción.',
-            'detalle' => $e->getMessage()
+            'success' => false,
+            'error' => 'Error al guardar',
+            'detalle' => env('APP_DEBUG') ? $e->getMessage() : null
         ], 500);
     }
 }
 
-
     public function show($id)
     {
+        Log::info('Buscando suscripción', ['id' => $id]);
         return Suscripcion::with(['usuario', 'plan', 'estado'])->findOrFail($id);
     }
 
     public function update(Request $request, $id)
     {
+        Log::info('Solicitud de actualización', [
+            'id' => $id,
+            'datos' => $request->all()
+        ]);
+
         $suscripcion = Suscripcion::findOrFail($id);
         $suscripcion->update($request->all());
+        
+        Log::info('Suscripción actualizada', [
+            'id' => $id,
+            'nuevos_datos' => $suscripcion->getChanges()
+        ]);
+        
         return $suscripcion;
     }
 
     public function destroy($id)
     {
+        Log::warning('Eliminando suscripción', ['id' => $id]);
+        
         $suscripcion = Suscripcion::findOrFail($id);
         $suscripcion->delete();
+        
+        Log::info('Suscripción eliminada', ['id' => $id]);
+        
         return response()->json(['message' => 'Suscripción eliminada']);
     }
 }

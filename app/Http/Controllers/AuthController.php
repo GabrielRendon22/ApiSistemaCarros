@@ -85,9 +85,20 @@ class AuthController extends Controller
     
         // Si todo está bien, generar el token
         try {
-            // Usamos JWTAuth::fromUser() para obtener el token correctamente
             $token = JWTAuth::fromUser($user);
-            return response()->json(compact('token'));
+
+            // Retornar el token junto con los datos del usuario
+            return response()->json([
+                'token' => $token,
+                'user' => [
+                    'id_usuario' => $user->id_usuario,
+                    'nombres' => $user->nombres,
+                    'email' => $user->email,
+                    'dui' => $user->dui,
+                    'telefono' => $user->telefono,
+                    'id_rol' => $user->id_rol,
+                ]
+            ]);
         } catch (JWTException $e) {
             return response()->json(['error' => 'Error al generar el token'], 500);
         }

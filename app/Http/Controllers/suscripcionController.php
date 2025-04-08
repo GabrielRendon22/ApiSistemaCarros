@@ -118,4 +118,23 @@ class SuscripcionController extends Controller
 
         return response()->json($suscripcionActiva);
     }
+
+    public function suscripcionesPorCliente($id_usuario)
+    {
+        Log::info('Buscando todas las suscripciones para el cliente', ['id_usuario' => $id_usuario]);
+
+        // Obtener todas las suscripciones del cliente
+        $suscripciones = Suscripcion::where('id_usuario', $id_usuario)
+            ->with(['plan', 'estado'])
+            ->get();
+
+        if ($suscripciones->isEmpty()) {
+            Log::info('No se encontraron suscripciones para el cliente', ['id_usuario' => $id_usuario]);
+            return response()->json(['message' => 'No se encontraron suscripciones para este cliente'], 404);
+        }
+
+        Log::info('Suscripciones encontradas para el cliente', ['id_usuario' => $id_usuario, 'total' => $suscripciones->count()]);
+
+        return response()->json($suscripciones);
+    }
 }

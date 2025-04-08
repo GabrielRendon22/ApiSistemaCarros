@@ -86,6 +86,7 @@ Route::get('suscripciones/{id}', [SuscripcionController::class, 'show']);
 Route::put('suscripciones/{id}', [SuscripcionController::class, 'update']);
 Route::delete('suscripciones/{id}', [SuscripcionController::class, 'destroy']);
 Route::get('suscripciones/activa/{id_usuario}', [SuscripcionController::class, 'suscripcionActivaPorCliente']);
+Route::get('suscripciones/cliente/{id_usuario}', [SuscripcionController::class, 'suscripcionesPorCliente']);
 
 // Rutas para VehiculoController
 Route::get('vehiculos', [VehiculoController::class, 'index']);

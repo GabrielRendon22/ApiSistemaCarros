@@ -2,6 +2,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Reservacion;
+use App\Models\Suscripcion;
+use App\Models\Vehiculo;
 use Illuminate\Http\Request;
 
 class ReservacionController extends Controller
@@ -19,6 +21,16 @@ class ReservacionController extends Controller
             'id_suscripcion' => 'required|integer|exists:suscripciones,id_suscripcion',
             'id_vehiculo' => 'required|integer|exists:vehiculos,id_vehiculo',
         ]);
+
+        // Validar que la categoría del vehículo coincida con el plan de la suscripción
+        $suscripcion = Suscripcion::with('plan')->findOrFail($request->id_suscripcion);
+        $vehiculo = Vehiculo::findOrFail($request->id_vehiculo);
+
+        if ($suscripcion->plan->id_categoria !== $vehiculo->id_categoria) {
+            return response()->json([
+                'error' => 'No puedes reservar un vehículo de una categoría diferente a la de tu plan.'
+            ], 403);
+        }
 
         // Validar que el vehículo no esté reservado en ese rango de fechas
         $reservaExistente = Reservacion::where('id_vehiculo', $request->id_vehiculo)
@@ -62,6 +74,16 @@ class ReservacionController extends Controller
         ]);
 
         $reservacion = Reservacion::findOrFail($id);
+
+        // Validar que la categoría del vehículo coincida con el plan de la suscripción
+        $suscripcion = Suscripcion::with('plan')->findOrFail($request->id_suscripcion);
+        $vehiculo = Vehiculo::findOrFail($request->id_vehiculo);
+
+        if ($suscripcion->plan->id_categoria !== $vehiculo->id_categoria) {
+            return response()->json([
+                'error' => 'No puedes reservar un vehículo de una categoría diferente a la de tu plan.'
+            ], 403);
+        }
 
         // Validar que el vehículo no esté reservado en el nuevo rango de fechas
         $reservaExistente = Reservacion::where('id_vehiculo', $request->id_vehiculo)

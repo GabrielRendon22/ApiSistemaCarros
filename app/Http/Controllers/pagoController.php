@@ -42,4 +42,18 @@ class PagoController extends Controller
         $pago->delete();
         return response()->json(['message' => 'Pago eliminado']);
     }
+
+    public function pagosPorCliente($id_usuario)
+    {
+        // Obtener todos los pagos realizados por el cliente
+        $pagos = Pago::whereHas('suscripcion', function ($query) use ($id_usuario) {
+            $query->where('id_usuario', $id_usuario);
+        })->with(['suscripcion.plan'])->get();
+
+        if ($pagos->isEmpty()) {
+            return response()->json(['message' => 'No se encontraron pagos para este cliente'], 404);
+        }
+
+        return response()->json($pagos);
+    }
 }

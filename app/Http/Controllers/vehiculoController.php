@@ -104,4 +104,18 @@ class VehiculoController extends Controller
 
         return response()->json($vehiculosReservados);
     }
+
+    public function vehiculosPorCategoria($id_categoria)
+    {
+        // Obtener los vehículos que pertenecen a la categoría especificada
+        $vehiculos = Vehiculo::where('id_categoria', $id_categoria)
+            ->with(['estado', 'categoria'])
+            ->get();
+
+        if ($vehiculos->isEmpty()) {
+            return response()->json(['message' => 'No se encontraron vehículos para esta categoría'], 404);
+        }
+
+        return response()->json($vehiculos);
+    }
 }

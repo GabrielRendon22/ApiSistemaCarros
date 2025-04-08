@@ -69,6 +69,7 @@ Route::post('pagos', [PagoController::class, 'store']);
 Route::get('pagos/{id}', [PagoController::class, 'show']);
 Route::put('pagos/{id}', [PagoController::class, 'update']);
 Route::delete('pagos/{id}', [PagoController::class, 'destroy']);
+Route::get('pagos/cliente/{id_usuario}', [PagoController::class, 'pagosPorCliente']);
 
 // Rutas para ReservacionController
 Route::get('reservaciones', [ReservacionController::class, 'index']);
@@ -76,6 +77,7 @@ Route::post('reservaciones', [ReservacionController::class, 'store']);
 Route::get('reservaciones/{id}', [ReservacionController::class, 'show']);
 Route::put('reservaciones/{id}', [ReservacionController::class, 'update']);
 Route::delete('reservaciones/{id}', [ReservacionController::class, 'destroy']);
+Route::get('reservaciones/cliente/{id_usuario}', [ReservacionController::class, 'reservacionesPorCliente']);
 
 // Rutas para SuscripcionController
 Route::get('suscripciones', [SuscripcionController::class, 'index']);
@@ -83,6 +85,7 @@ Route::post('suscripciones', [SuscripcionController::class, 'store']);
 Route::get('suscripciones/{id}', [SuscripcionController::class, 'show']);
 Route::put('suscripciones/{id}', [SuscripcionController::class, 'update']);
 Route::delete('suscripciones/{id}', [SuscripcionController::class, 'destroy']);
+Route::get('suscripciones/activa/{id_usuario}', [SuscripcionController::class, 'suscripcionActivaPorCliente']);
 
 // Rutas para VehiculoController
 Route::get('vehiculos', [VehiculoController::class, 'index']);
@@ -92,6 +95,7 @@ Route::put('vehiculos/{id}', [VehiculoController::class, 'update']);
 Route::delete('vehiculos/{id}', [VehiculoController::class, 'destroy']);
 Route::get('vehiculos/sin-reserva', [VehiculoController::class, 'vehiculosSinReserva']);
 Route::get('vehiculos/con-reserva', [VehiculoController::class, 'vehiculosConReserva']);
+Route::get('vehiculos/categoria/{id_categoria}', [VehiculoController::class, 'vehiculosPorCategoria']);
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);

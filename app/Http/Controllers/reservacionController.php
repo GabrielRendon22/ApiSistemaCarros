@@ -22,41 +22,37 @@ class ReservacionController extends Controller
             'id_vehiculo' => 'required|integer|exists:vehiculos,id_vehiculo',
         ]);
 
-        // Validar que la categoría del vehículo coincida con el plan de la suscripción
+        // Obtener la suscripción activa
         $suscripcion = Suscripcion::with('plan')->findOrFail($request->id_suscripcion);
+
+        // Obtener el vehículo que se desea reservar
         $vehiculo = Vehiculo::findOrFail($request->id_vehiculo);
 
+        // Validar que la categoría del vehículo coincida con la categoría del plan de la suscripción
         if ($suscripcion->plan->id_categoria !== $vehiculo->id_categoria) {
             return response()->json([
                 'error' => 'No puedes reservar un vehículo de una categoría diferente a la de tu plan.'
             ], 403);
         }
 
-        // Validar que el vehículo no esté reservado en ese rango de fechas
+        // Validar que el vehículo no esté reservado en el rango de fechas
         $reservaExistente = Reservacion::where('id_vehiculo', $request->id_vehiculo)
             ->where(function ($query) use ($request) {
                 $query->whereBetween('fecha_desde', [$request->fecha_desde, $request->fecha_hasta])
-                      ->orWhereBetween('fecha_hasta', [$request->fecha_desde, $request->fecha_hasta])
-                      ->orWhere(function ($query) use ($request) {
-                          $query->where('fecha_desde', '<=', $request->fecha_desde)
-                                ->where('fecha_hasta', '>=', $request->fecha_hasta);
-                      });
+                      ->orWhereBetween('fecha_hasta', [$request->fecha_desde, $request->fecha_hasta]);
             })
             ->exists();
 
         if ($reservaExistente) {
             return response()->json([
-                'error' => 'El vehículo ya está reservado en ese período de tiempo.'
-            ], 422);
+                'error' => 'El vehículo ya está reservado en el rango de fechas seleccionado.'
+            ], 409);
         }
 
-        // Crear la reserva
+        // Crear la reservación
         $reservacion = Reservacion::create($request->all());
 
-        return response()->json([
-            'message' => 'Reservación creada exitosamente.',
-            'data' => $reservacion
-        ], 201);
+        return response()->json($reservacion, 201);
     }
 
     public function show($id)

@@ -8,7 +8,7 @@ class Vehiculo extends Model
     protected $table = 'vehiculos';
     protected $primaryKey = 'id_vehiculo';
 
-    protected $fillable = ['marca', 'modelo', 'anio', 'placa', 'id_estado', 'id_categoria'];
+    protected $fillable = ['marca', 'modelo', 'anio', 'placa', 'id_estado', 'id_categoria', 'foto']; // Agregar 'foto'
 
     public function estado()
     {

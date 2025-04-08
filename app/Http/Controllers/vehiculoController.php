@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Vehiculo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class VehiculoController extends Controller
 {
@@ -20,8 +21,22 @@ class VehiculoController extends Controller
             'placa' => 'required|string|min:6|max:10|unique:vehiculos,placa',
             'id_estado' => 'required|integer|exists:estados,id_estado',
             'id_categoria' => 'required|integer|exists:categorias,id_categoria',
-        ]);        
-        return Vehiculo::create($request->all());
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validar la foto
+        ]);
+
+        // Manejar la subida de la foto
+        $fotoPath = null;
+        if ($request->hasFile('foto')) {
+            $fotoPath = $request->file('foto')->store('vehiculos', 'public'); // Guardar en storage/app/public/vehiculos
+        }
+
+        // Crear el vehículo con la ruta de la foto
+        $vehiculo = Vehiculo::create(array_merge(
+            $request->except('foto'),
+            ['foto' => $fotoPath]
+        ));
+
+        return response()->json($vehiculo, 201);
     }
 
     public function show($id)
@@ -31,17 +46,50 @@ class VehiculoController extends Controller
 
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'marca' => 'sometimes|string|min:2|max:50',
+            'modelo' => 'sometimes|string|min:2|max:50',
+            'anio' => 'sometimes|integer|digits:4|min:1900|max:' . date('Y'),
+            'placa' => 'sometimes|string|min:6|max:10|unique:vehiculos,placa,' . $id . ',id_vehiculo',
+            'id_estado' => 'sometimes|integer|exists:estados,id_estado',
+            'id_categoria' => 'sometimes|integer|exists:categorias,id_categoria',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validar la foto
+        ]);
+
         $vehiculo = Vehiculo::findOrFail($id);
-        $vehiculo->update($request->all());
-        return $vehiculo;
+
+        // Manejar la subida de la nueva foto (si se proporciona)
+        if ($request->hasFile('foto')) {
+            // Eliminar la foto anterior si existe
+            if ($vehiculo->foto) {
+                Storage::disk('public')->delete($vehiculo->foto);
+            }
+
+            // Subir la nueva foto
+            $vehiculo->foto = $request->file('foto')->store('vehiculos', 'public');
+        }
+
+        // Actualizar los demás campos
+        $vehiculo->update($request->except('foto'));
+
+        return response()->json($vehiculo, 200);
     }
 
     public function destroy($id)
     {
         $vehiculo = Vehiculo::findOrFail($id);
+
+        // Eliminar la foto asociada si existe
+        if ($vehiculo->foto) {
+            Storage::disk('public')->delete($vehiculo->foto);
+        }
+
+        // Eliminar el vehículo
         $vehiculo->delete();
-        return response()->json(['message' => 'Vehículo eliminado']);
+
+        return response()->json(['message' => 'Vehículo eliminado'], 200);
     }
+
     public function vehiculosSinReserva()
     {
         $vehiculosReservados = Reservacion::pluck('id_vehiculo'); // Obtener todos los vehículos con reservas
@@ -50,9 +98,6 @@ class VehiculoController extends Controller
         return response()->json($vehiculosSinReserva);
     }
 
-    /**
-     * Listar vehículos CON reservas.
-     */
     public function vehiculosConReserva()
     {
         $vehiculosReservados = Vehiculo::whereHas('reservaciones')->with('reservaciones')->get();

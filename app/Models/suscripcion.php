@@ -35,23 +35,24 @@ class Suscripcion extends Model
     {
         return $this->hasMany(Pago::class, 'id_suscripcion', 'id_suscripcion');
     }
+
     protected static function boot()
-{
-    parent::boot();
+    {
+        parent::boot();
 
-    static::creating(function($model) {
-        \Log::channel('suscripciones')->debug('Intentando crear suscripción', $model->toArray());
-    });
+        static::creating(function($model) {
+            \Log::channel('suscripciones')->debug('Intentando crear suscripción', $model->toArray());
+        });
 
-    static::created(function($model) {
-        \Log::channel('suscripciones')->info('Suscripción creada en BD', [
-            'id' => $model->id_suscripcion,
-            'datos' => $model->toArray()
-        ]);
-    });
+        static::created(function($model) {
+            \Log::channel('suscripciones')->info('Suscripción creada en BD', [
+                'id' => $model->id_suscripcion,
+                'datos' => $model->toArray()
+            ]);
+        });
 
-    static::saving(function($model) {
-        \Log::channel('suscripciones')->debug('Validando suscripción antes de guardar', $model->toArray());
-    });
-}
+        static::saving(function($model) {
+            \Log::channel('suscripciones')->debug('Validando suscripción antes de guardar', $model->toArray());
+        });
+    }
 }

@@ -11,7 +11,7 @@ class SuscripcionController extends Controller
     public function index()
     {
         Log::info('Accediendo al listado de suscripciones');
-        return Suscripcion::all();
+        return Suscripcion::with('plan')->get();
     }
 
     public function store(Request $request)
@@ -65,7 +65,7 @@ class SuscripcionController extends Controller
     public function show($id)
     {
         Log::info('Buscando suscripción', ['id' => $id]);
-        return Suscripcion::with(['usuario', 'plan', 'estado'])->findOrFail($id);
+        return Suscripcion::with(['plan', 'usuario', 'estado'])->findOrFail($id);
     }
 
     public function update(Request $request, $id)

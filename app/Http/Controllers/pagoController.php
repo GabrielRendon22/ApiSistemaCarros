@@ -8,7 +8,8 @@ class PagoController extends Controller
 {
     public function index()
     {
-        return Pago::with('suscripcion')->get();
+        // Incluir la información de la suscripción y del plan
+        return Pago::with(['suscripcion.plan'])->get();
     }
 
     public function store(Request $request)
@@ -24,7 +25,8 @@ class PagoController extends Controller
 
     public function show($id)
     {
-        return Pago::with('suscripcion')->findOrFail($id);
+        // Incluir la información de la suscripción y del plan
+        return Pago::with(['suscripcion.plan'])->findOrFail($id);
     }
 
     public function update(Request $request, $id)

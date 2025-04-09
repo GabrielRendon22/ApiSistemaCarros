@@ -121,20 +121,40 @@ class SuscripcionController extends Controller
 
     public function suscripcionesPorCliente($id_usuario)
     {
-        Log::info('Buscando todas las suscripciones para el cliente', ['id_usuario' => $id_usuario]);
-
-        // Obtener todas las suscripciones del cliente
+        // 1) Buscas las suscripciones con sus relaciones:
         $suscripciones = Suscripcion::where('id_usuario', $id_usuario)
-            ->with(['plan', 'estado'])
+            ->with(['plan.categoria','estado'])
             ->get();
-
+    
+        // 2) Si no hay suscripciones, devuelves 404:
         if ($suscripciones->isEmpty()) {
-            Log::info('No se encontraron suscripciones para el cliente', ['id_usuario' => $id_usuario]);
             return response()->json(['message' => 'No se encontraron suscripciones para este cliente'], 404);
         }
-
-        Log::info('Suscripciones encontradas para el cliente', ['id_usuario' => $id_usuario, 'total' => $suscripciones->count()]);
-
-        return response()->json($suscripciones);
+    
+        // 3) Mapeas cada suscripción para construir tu propia estructura:
+        $suscripcionesTransformadas = $suscripciones->map(function($suscripcion) {
+            return [
+                'id_suscripcion' => $suscripcion->id_suscripcion,
+                'fecha_inicio'   => $suscripcion->fecha_inicio,
+                'fecha_fin'      => $suscripcion->fecha_fin,
+                'plan'           => [
+                    'id'        => $suscripcion->plan->id_plan,
+                    'nombre'    => $suscripcion->plan->nombre_plan,
+                    'categoria' => [
+                        'id'     => $suscripcion->plan->categoria->id_categoria,
+                        'nombre' => $suscripcion->plan->categoria->nombre_categoria,
+                    ],
+                ],
+                // Aqui puedes "aplanar" o ajustar como quieras mostrar el estado
+                'estado' => [
+                    'id'     => $suscripcion->estado->id_estado,
+                    'nombre' => $suscripcion->estado->descripcion,
+                ],
+            ];
+        });
+    
+        // 4) Devuelves el arreglo transformado como JSON:
+        return response()->json($suscripcionesTransformadas);
     }
+    
 }
